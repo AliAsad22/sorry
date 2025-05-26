@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>I'm Sorry Esha</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
+        }
+        .cute-heading {
+            font-family: 'Pacifico', cursive; /* A cute, handwritten-style font */
+        }
+        .modal {
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out;
+        }
+        .emoji-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            pointer-events: none; /* Make sure emojis don't interfere with clicks */
+            opacity: 0.1; /* Make emojis subtle */
+        }
+        .emoji-bg span {
+            font-size: 2rem; /* Adjust emoji size */
+            margin: 10px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Stagger animation for emojis */
+        .emoji-bg span:nth-child(2n) { animation-delay: -3s; }
+        .emoji-bg span:nth-child(3n) { animation-delay: -1.5s; }
+        .emoji-bg span:nth-child(4n) { animation-delay: -4.5s; }
+
+        /* Custom scrollbar for a modern feel (optional) */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a202c; /* bg-gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* bg-gray-600 */
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #718096; /* bg-gray-500 */
+        }
+
+        /* Styles for the play button area */
+        .play-music-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100; /* Ensure it's above other content like emoji-bg */
+        }
+        .play-music-elements {
+            position: relative;
+            width: 160px; /* Adjust as needed for text and arrow */
+            height: 100px; /* Adjust as needed */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end; /* Aligns button to bottom of this container */
+        }
+        .play-me-text {
+            position: absolute;
+            top: 0px; /* Position text above the arrow and button */
+            left: 50%;
+            transform: translateX(-50%) rotate(-8deg); /* Center and slightly rotate */
+            font-family: 'Pacifico', cursive;
+            color: #F472B6; /* Tailwind pink-500 */
+            font-size: 1.4rem; /* Slightly larger handwritten text */
+            white-space: nowrap;
+        }
+        .play-me-arrow svg {
+            position: absolute;
+            top: 35px; /* Position arrow between text and button */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px; /* Adjust size of arrow */
+            height: 45px;
+        }
+        .play-action-button {
+            /* This class is for the <a> tag */
+            display: inline-block; /* Needed for padding and proper display */
+            background-color: #EC4899; /* Tailwind pink-500 */
+            color: white;
+            padding: 0.8rem; /* Tailwind p-3 equivalent */
+            border-radius: 9999px; /* rounded-full */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+            transition: all 0.2s ease-in-out;
+            transform-origin: center; /* Ensures scaling is from the center */
+        }
+        .play-action-button:hover {
+            background-color: #DB2777; /* Tailwind pink-600 */
+            transform: scale(1.1);
+        }
+        .play-action-button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.5); /* focus:ring-2 focus:ring-pink-300 focus:ring-opacity-75 */
+        }
+        /* Custom list styling for modals */
+        .modal-list {
+            list-style-type: none; /* Remove default bullets */
+            padding-left: 0;
+        }
+        .modal-list li {
+            position: relative;
+            padding-left: 1.5em; /* Space for custom bullet */
+            margin-bottom: 0.5em;
+        }
+        .modal-list li::before {
+            content: '💖'; /* Pink heart emoji as bullet */
+            position: absolute;
+            left: 0;
+            top: 0.1em; /* Adjust vertical alignment */
+            font-size: 0.9em;
+        }
+        .modal-list.cons li::before {
+            content: '💔'; /* Broken heart for cons, or choose another */
+        }
+
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+
+    <div class="emoji-bg" aria-hidden="true">
+        <script>
+            const emojiContainer = document.querySelector('.emoji-bg');
+            const emojis = ['🥺', '✨', '🥹', '🌟'];
+            const numEmojis = 50; // Adjust number of emojis
+            if (emojiContainer) { // Check if element exists
+                for (let i = 0; i < numEmojis; i++) {
+                    const span = document.createElement('span');
+                    span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    emojiContainer.appendChild(span);
+                }
+            }
+        </script>
+    </div>
+
+    <div class="relative z-10 text-center w-full max-w-md">
+        <h1 class="cute-heading text-5xl sm:text-6xl md:text-7xl font-bold text-pink-400 mb-12 leading-tight">
+            I'm sorry Esha
+        </h1>
+
+        <div class="space-y-4">
+            <button onclick="openModal('modalLove')" class="w-full bg-gray-800 hover:bg-pink-500 text-gray-100 font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50">
+                Why I love you
+            </button>
+            <button onclick="openModal('modalImprove')" class="w-full bg-gray-800 hover:bg-pink-500 text-gray-100 font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50">
+                What I'm doing to improve
+            </button>
+            <button onclick="openModal('modalMakeUp')" class="w-full bg-gray-800 hover:bg-pink-500 text-gray-100 font-semibold py-3 px-6 rounded-lg shadow-md transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-50">
+                How I'll make it up to you
+            </button>
+            </div>
+    </div>
+
+    <div id="modalLove" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 opacity-0 invisible z-50">
+        <div class="modal-content bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md transform scale-95">
+            <div class="flex justify-between items-center mb-6"> {/* Increased margin-bottom */}
+                <h2 class="text-2xl font-bold text-pink-400">Why I Love You, Esha</h2>
+                <button onclick="closeModal('modalLove')" class="text-gray-400 hover:text-pink-400 transition-colors text-2xl">&times;</button>
+            </div>
+            <div class="text-gray-300 space-y-4"> {/* Increased space between sections */}
+                <div>
+                    <h3 class="text-xl font-semibold text-pink-300 mb-2">Pros:</h3>
+                    <ul class="modal-list">
+                        <li>Best friend</li>
+                        <li>Listens to me</li>
+                        <li>Takes care of me</li>
+                        <li>Has kept up with all of my bullshit</li>
+                        <li>I have treated her like I'm her gf</li>
+                        <li>She is a little crazy and scary witch</li>
+                        <li>Can't lose her, will die</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold text-pink-300 mb-2">Cons:</h3>
+                    <ul class="modal-list cons">
+                        <li>Takes care of me (I don't deserve it)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalImprove" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 opacity-0 invisible z-50">
+        <div class="modal-content bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-pink-400">What I'm Doing to Improve</h2>
+                <button onclick="closeModal('modalImprove')" class="text-gray-400 hover:text-pink-400 transition-colors text-2xl">&times;</button>
+            </div>
+            <div class="text-gray-300 space-y-3">
+                <p>I've been doing a lot of thinking about what happened, and I realize I messed up by [briefly and honestly acknowledge your mistake].</p>
+                <p>To make sure this doesn't happen again, I'm focusing on:</p>
+                <ul class="modal-list"> {/* Using custom list style */}
+                    <li>I definitely won't ever, never ever villainize you.</li>
+                    <li>I went to my second therapy session, will keep at it.</li>
+                    <li>Will do whatever you say.</li>
+                    <li>Won't annoy you anymore.</li>
+                </ul>
+                <p>My friendship with you is too important to me, and I'm committed to being a better friend.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalMakeUp" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 opacity-0 invisible z-50">
+        <div class="modal-content bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md transform scale-95">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold text-pink-400">How I'll Make It Up to You</h2>
+                <button onclick="closeModal('modalMakeUp')" class="text-gray-400 hover:text-pink-400 transition-colors text-2xl">&times;</button>
+            </div>
+            <div class="text-gray-300 space-y-3">
+                <p>Words are one thing, but I want to show you I'm serious about making things right. Here are some ideas:</p>
+                <ul class="modal-list"> {/* Using custom list style */}
+                    <li>Option 1: Sushi</li>
+                    <li>Option 2: Dinner at a place of your choice</li>
+                    <li>Option 3: Dahlia but with 3 milk cake this time for sure.</li>
+                    <li>Option 4: Die (Okay, maybe not this one, but I'm really sorry!)</li>
+                </ul>
+                <p>Or, if you have any ideas, I'm all ears. The most important thing for me is to [reiterate your goal, e.g., see you smile again, earn back your trust, fix our friendship].</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="play-music-container">
+        <div class="play-music-elements">
+            <span class="play-me-text">Play me</span>
+            <div class="play-me-arrow" aria-hidden="true">
+                <svg viewBox="0 0 70 50">
+                    <path d="M15 5 C 25 35, 45 30, 55 10" stroke="#F472B6" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="4,4"/>
+                    <path d="M50 5 L55 10 L60 5" stroke="#F472B6" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <a href="about:blank" target="_blank" class="play-action-button" aria-label="Play Music">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/> 
+                </svg>
+            </a>
+        </div>
+    </div>
+
+
+    <script>
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('invisible', 'opacity-0');
+                modal.querySelector('.modal-content').classList.remove('scale-95');
+                modal.classList.add('opacity-100');
+                modal.querySelector('.modal-content').classList.add('scale-100');
+                // Trap focus inside the modal
+                trapFocus(modal);
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('opacity-0');
+                modal.querySelector('.modal-content').classList.add('scale-95');
+                modal.querySelector('.modal-content').classList.remove('scale-100');
+                setTimeout(() => {
+                    modal.classList.add('invisible');
+                }, 300); // Corresponds to transition duration
+            }
+        }
+
+        // Close modal on escape key press
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.querySelectorAll('.modal:not(.invisible)').forEach(modal => {
+                    const modalId = modal.id;
+                    closeModal(modalId);
+                });
+            }
+        });
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(event) {
+                if (event.target === this) { // Check if the click is on the modal backdrop itself
+                    closeModal(this.id);
+                }
+            });
+        });
+
+        // Basic focus trapping for accessibility
+        function trapFocus(element) {
+            const focusableElementsQuery = 'button, [href], input:not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+            const focusableContent = Array.from(element.querySelectorAll(focusableElementsQuery)).filter(el => el.offsetParent !== null); // Only visible, focusable elements
+
+            if (focusableContent.length === 0) return;
+
+            const firstFocusableElement = focusableContent[0];
+            const lastFocusableElement = focusableContent[focusableContent.length - 1];
+            const previouslyFocusedElement = document.activeElement;
+
+            // Remove any existing keydown listener for this element to avoid duplicates
+            if (element.keydownListener) {
+                document.removeEventListener('keydown', element.keydownListener);
+            }
+            
+            element.keydownListener = function(e) {
+                let isTabPressed = e.key === 'Tab' || e.keyCode === 9;
+                if (!isTabPressed) return;
+
+                // If the modal is not visible, remove this specific listener and restore focus
+                if (element.classList.contains('invisible')) {
+                    document.removeEventListener('keydown', element.keydownListener);
+                    element.keydownListener = null; // Clear the stored listener
+                    if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+                        previouslyFocusedElement.focus();
+                    }
+                    return;
+                }
+
+                if (e.shiftKey) { // Shift + Tab
+                    if (document.activeElement === firstFocusableElement) {
+                        lastFocusableElement.focus();
+                        e.preventDefault();
+                    }
+                } else { // Tab
+                    if (document.activeElement === lastFocusableElement) {
+                        firstFocusableElement.focus();
+                        e.preventDefault();
+                    }
+                }
+            };
+            
+            document.addEventListener('keydown', element.keydownListener);
+
+            if (firstFocusableElement) {
+                firstFocusableElement.focus();
+            }
+            
+            // Cleanup listener when modal is closed (via class change)
+            if (!element.mutationObserver) {
+                element.mutationObserver = new MutationObserver((mutationsList, observerInstance) => {
+                    for(const mutation of mutationsList) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                            if (element.classList.contains('invisible')) {
+                                if (element.keydownListener) {
+                                    document.removeEventListener('keydown', element.keydownListener);
+                                    element.keydownListener = null;
+                                }
+                                if (previouslyFocusedElement && typeof previouslyFocusedElement.focus === 'function') {
+                                    previouslyFocusedElement.focus();
+                                }
+                                observerInstance.disconnect(); // Stop observing once cleaned up
+                                element.mutationObserver = null; // Clear the observer
+                                return;
+                            }
+                        }
+                    }
+                });
+                element.mutationObserver.observe(element, { attributes: true });
+            }
+        }
+    </script>
+</body>
+</html>
